@@ -1,5 +1,8 @@
 # sysmon
 
+# DEV requirements
+- **protoc** `sudo apt install protobuf-compiler` ([other instalation options](https://grpc.io/docs/protoc-installation/))
+
 # ТЗ на демон, осуществляющий "Системный мониторинг"
 
 ## Общее описание

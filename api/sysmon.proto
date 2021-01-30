@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package monitor;
+option go_package = ".;pb";
+
+// Средняя загрузка системы за 1, 5 и 15 секунд
+message LoadAVG {
+    double load1 = 1;
+    double load5 = 2;
+    double load15 = 3;
+}
+
+// Средняя загрузка процессора
+message LoadCPU {
+    uint64 user = 1;
+    uint64 system = 2;
+    uint64 idle = 3;
+}
+
+// Запрос от клиента к серверу
+message MonRequest {
+    uint32 timeout = 1;
+    uint32 averaged_over = 2;
+}
+
+// Ответ от сервера клиенту
+message StatSnapshot {
+    LoadAVG lavg = 1;
+    LoadCPU lcpu = 2;
+}
+
+// Сервис получения данных мониторинга системы
+service Monitor {
+    rpc GetStat(MonRequest) returns (stream StatSnapshot) {}
+}

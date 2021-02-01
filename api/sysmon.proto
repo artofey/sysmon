@@ -31,5 +31,5 @@ message StatSnapshot {
 
 // Сервис получения данных мониторинга системы
 service Monitor {
-    rpc GetStat(MonRequest) returns (stream StatSnapshot) {}
+    rpc GetStats(MonRequest) returns (stream StatSnapshot) {}
 }

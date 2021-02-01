@@ -32,3 +32,18 @@ func parseLoadCPULinux() (*pb.LoadCPU, error) {
 
 	return &lc, nil
 }
+
+// MidleLoadCPU усредняет значения для массива значений LoadCPU.
+func MidleLoadCPU(ll []*pb.LoadCPU) *pb.LoadCPU {
+	var lu, ls, li uint64
+	for _, l := range ll {
+		lu += l.User
+		ls += l.System
+		li += l.Idle
+	}
+	return &pb.LoadCPU{
+		User:   lu / uint64(len(ll)),
+		System: ls / uint64(len(ll)),
+		Idle:   li / uint64(len(ll)),
+	}
+}

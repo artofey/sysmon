@@ -31,3 +31,18 @@ func parseLoadAVGLinux() (*pb.LoadAVG, error) {
 
 	return &la, nil
 }
+
+// MidleLoadAVG усредняет значения для массива значений LoadAVG.
+func MidleLoadAVG(ll []*pb.LoadAVG) *pb.LoadAVG {
+	var l1, l5, l15 float64
+	for _, l := range ll {
+		l1 += l.Load1
+		l5 += l.Load5
+		l15 += l.Load15
+	}
+	return &pb.LoadAVG{
+		Load1:  l1 / float64(len(ll)),
+		Load5:  l5 / float64(len(ll)),
+		Load15: l15 / float64(len(ll)),
+	}
+}

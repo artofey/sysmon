@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MonitorClient interface {
-	GetStat(ctx context.Context, in *MonRequest, opts ...grpc.CallOption) (Monitor_GetStatClient, error)
+	GetStats(ctx context.Context, in *MonRequest, opts ...grpc.CallOption) (Monitor_GetStatsClient, error)
 }
 
 type monitorClient struct {
@@ -29,12 +29,12 @@ func NewMonitorClient(cc grpc.ClientConnInterface) MonitorClient {
 	return &monitorClient{cc}
 }
 
-func (c *monitorClient) GetStat(ctx context.Context, in *MonRequest, opts ...grpc.CallOption) (Monitor_GetStatClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Monitor_ServiceDesc.Streams[0], "/monitor.Monitor/GetStat", opts...)
+func (c *monitorClient) GetStats(ctx context.Context, in *MonRequest, opts ...grpc.CallOption) (Monitor_GetStatsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Monitor_ServiceDesc.Streams[0], "/monitor.Monitor/GetStats", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &monitorGetStatClient{stream}
+	x := &monitorGetStatsClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -44,16 +44,16 @@ func (c *monitorClient) GetStat(ctx context.Context, in *MonRequest, opts ...grp
 	return x, nil
 }
 
-type Monitor_GetStatClient interface {
+type Monitor_GetStatsClient interface {
 	Recv() (*StatSnapshot, error)
 	grpc.ClientStream
 }
 
-type monitorGetStatClient struct {
+type monitorGetStatsClient struct {
 	grpc.ClientStream
 }
 
-func (x *monitorGetStatClient) Recv() (*StatSnapshot, error) {
+func (x *monitorGetStatsClient) Recv() (*StatSnapshot, error) {
 	m := new(StatSnapshot)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (x *monitorGetStatClient) Recv() (*StatSnapshot, error) {
 // All implementations must embed UnimplementedMonitorServer
 // for forward compatibility
 type MonitorServer interface {
-	GetStat(*MonRequest, Monitor_GetStatServer) error
+	GetStats(*MonRequest, Monitor_GetStatsServer) error
 	mustEmbedUnimplementedMonitorServer()
 }
 
@@ -73,8 +73,8 @@ type MonitorServer interface {
 type UnimplementedMonitorServer struct {
 }
 
-func (UnimplementedMonitorServer) GetStat(*MonRequest, Monitor_GetStatServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetStat not implemented")
+func (UnimplementedMonitorServer) GetStats(*MonRequest, Monitor_GetStatsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetStats not implemented")
 }
 func (UnimplementedMonitorServer) mustEmbedUnimplementedMonitorServer() {}
 
@@ -89,24 +89,24 @@ func RegisterMonitorServer(s grpc.ServiceRegistrar, srv MonitorServer) {
 	s.RegisterService(&Monitor_ServiceDesc, srv)
 }
 
-func _Monitor_GetStat_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Monitor_GetStats_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(MonRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(MonitorServer).GetStat(m, &monitorGetStatServer{stream})
+	return srv.(MonitorServer).GetStats(m, &monitorGetStatsServer{stream})
 }
 
-type Monitor_GetStatServer interface {
+type Monitor_GetStatsServer interface {
 	Send(*StatSnapshot) error
 	grpc.ServerStream
 }
 
-type monitorGetStatServer struct {
+type monitorGetStatsServer struct {
 	grpc.ServerStream
 }
 
-func (x *monitorGetStatServer) Send(m *StatSnapshot) error {
+func (x *monitorGetStatsServer) Send(m *StatSnapshot) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -119,8 +119,8 @@ var Monitor_ServiceDesc = grpc.ServiceDesc{
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetStat",
-			Handler:       _Monitor_GetStat_Handler,
+			StreamName:    "GetStats",
+			Handler:       _Monitor_GetStats_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -23,7 +23,7 @@ func (a *App) Run() {
 	c := make(chan *pb.StatSnapshot)
 	go statcollector.StartColecting(c)
 
-	GRPCServer, err := server.New(90000)
+	GRPCServer, err := server.New(9000)
 	ErrHandle(err)
 
 	go func() {

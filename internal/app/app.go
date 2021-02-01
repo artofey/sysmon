@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/artofey/sysmon/internal/pb"
@@ -23,7 +22,7 @@ func (a *App) Run() {
 	c := make(chan *pb.StatSnapshot)
 	go statcollector.StartColecting(c)
 
-	GRPCServer, err := server.New(9000)
+	GRPCServer, err := server.New(50051, a.Stats)
 	ErrHandle(err)
 
 	go func() {
@@ -36,8 +35,9 @@ func (a *App) Run() {
 
 	for sc := range c {
 		a.Stats = append(a.Stats, sc)
-		fmt.Println(sc.Lavg.Load1, sc.Lavg.Load5, sc.Lavg.Load15)
-		fmt.Println(sc.Lcpu.User, sc.Lcpu.System, sc.Lcpu.Idle)
+		// fmt.Println(a.Stats)
+		// fmt.Println(sc.Lavg.Load1, sc.Lavg.Load5, sc.Lavg.Load15)
+		// fmt.Println(sc.Lcpu.User, sc.Lcpu.System, sc.Lcpu.Idle)
 	}
 }
 

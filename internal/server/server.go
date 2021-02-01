@@ -17,17 +17,20 @@ type Server struct {
 	pb.UnimplementedMonitorServer
 	port   int
 	StatCh chan *pb.StatSnapshot
+	Stats  []*pb.StatSnapshot
 }
 
-func New(port int) (*Server, error) {
+func New(port int, st []*pb.StatSnapshot) (*Server, error) {
 	return &Server{
-		StatCh: make(chan *pb.StatSnapshot),
 		port:   port,
+		StatCh: make(chan *pb.StatSnapshot),
+		Stats:  st,
 	}, nil
 }
 
 func Start(s *Server) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", s.port))
+	log.Print("Start GRPC server")
+	lis, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", s.port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
@@ -52,22 +55,23 @@ ENDFOR:
 			break ENDFOR
 		// Стар передачи данных после ожидания
 		case <-time.After(time.Duration(mr.AveragedOver) * time.Second):
-
-			if err := stream.Send(s); err != nil {
-				return err
+			t := time.NewTicker(time.Duration(mr.Timeout) * time.Second)
+			for range t.C {
+				fmt.Printf("%v - %v\n", s.Stats, mr)
+				midStat, err := getMidleSnapshot(s.Stats, mr)
+				if err != nil {
+					return err
+				}
+				if err := stream.Send(midStat); err != nil {
+					return err
+				}
 			}
 		}
 	}
 	return nil
 }
 
-func getStatsChan(mr *pb.MonRequest) chan *pb.StatSnapshot {
-	statsC := make(chan *pb.StatSnapshot)
-
-	return statsC
-}
-
-func getAVGSnapshot(st []*pb.StatSnapshot, mr *pb.MonRequest) (*pb.StatSnapshot, error) {
+func getMidleSnapshot(st []*pb.StatSnapshot, mr *pb.MonRequest) (*pb.StatSnapshot, error) {
 	var mu sync.Mutex
 	ao := int(mr.AveragedOver)
 	mu.Lock()
@@ -77,7 +81,7 @@ func getAVGSnapshot(st []*pb.StatSnapshot, mr *pb.MonRequest) (*pb.StatSnapshot,
 		return nil, fmt.Errorf("no nedded stats")
 	}
 
-	lastSnap := st[len(st)-ao : len(st)] // get slice by last items
+	lastSnap := st[len(st)-ao:] // get slice by last items
 	var lastAVG []*pb.LoadAVG
 	var lastCPU []*pb.LoadCPU
 

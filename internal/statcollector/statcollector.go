@@ -6,8 +6,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/artofey/sysmon/internal/models"
 	"github.com/artofey/sysmon/internal/pb"
 )
+
+type StatCollector interface {
+	GetStat() (*models.StatSnapshot, error)
+	StartColecting(chan *models.StatSnapshot)
+}
 
 // ProcPath is path to proc dir.
 var ProcPath string = "/proc/"

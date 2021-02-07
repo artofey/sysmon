@@ -91,7 +91,7 @@ func getMidleSnapshot(st []*pb.StatSnapshot, mr *pb.MonRequest) (*pb.StatSnapsho
 	}
 
 	var snap *pb.StatSnapshot
-	snap.Lavg = statcollector.MidleLoadAVG(lastAVG)
-	snap.Lcpu = statcollector.MidleLoadCPU(lastCPU)
+	snap.Lavg = statcollector.AverageLoadAVG(lastAVG)
+	snap.Lcpu = statcollector.AverageLoadCPU(lastCPU)
 	return snap, nil
 }

@@ -3,23 +3,12 @@ package statcollector
 import (
 	"fmt"
 	"io/ioutil"
-	"runtime"
 
 	"github.com/artofey/sysmon/internal/pb"
 )
 
 // ParseLoadCPU return CPU stat.
 func ParseLoadCPU() (*pb.LoadCPU, error) {
-	os := runtime.GOOS
-	switch os {
-	case "linux":
-		return parseLoadCPULinux()
-	default:
-		return nil, fmt.Errorf("%s OS not supported", os)
-	}
-}
-
-func parseLoadCPULinux() (*pb.LoadCPU, error) {
 	procF := ProcPath + "stat"
 	b, err := ioutil.ReadFile(procF)
 	if err != nil {
@@ -33,8 +22,8 @@ func parseLoadCPULinux() (*pb.LoadCPU, error) {
 	return &lc, nil
 }
 
-// MidleLoadCPU усредняет значения для массива значений LoadCPU.
-func MidleLoadCPU(ll []*pb.LoadCPU) *pb.LoadCPU {
+// AverageLoadCPU усредняет значения для массива значений LoadCPU.
+func AverageLoadCPU(ll []*pb.LoadCPU) *pb.LoadCPU {
 	var lu, ls, li uint64
 	for _, l := range ll {
 		lu += l.User

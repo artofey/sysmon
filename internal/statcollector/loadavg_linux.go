@@ -3,23 +3,12 @@ package statcollector
 import (
 	"fmt"
 	"io/ioutil"
-	"runtime"
 
 	"github.com/artofey/sysmon/internal/pb"
 )
 
 // ParseLoadAVG return load average info.
 func ParseLoadAVG() (*pb.LoadAVG, error) {
-	os := runtime.GOOS
-	switch os {
-	case "linux":
-		return parseLoadAVGLinux()
-	default:
-		return nil, fmt.Errorf("%s OS not supported", os)
-	}
-}
-
-func parseLoadAVGLinux() (*pb.LoadAVG, error) {
 	procF := ProcPath + "loadavg"
 	b, err := ioutil.ReadFile(procF)
 	if err != nil {
@@ -32,8 +21,8 @@ func parseLoadAVGLinux() (*pb.LoadAVG, error) {
 	return &la, nil
 }
 
-// MidleLoadAVG усредняет значения для массива значений LoadAVG.
-func MidleLoadAVG(ll []*pb.LoadAVG) *pb.LoadAVG {
+// AverageLoadAVG усредняет значения для массива значений LoadAVG.
+func AverageLoadAVG(ll []*pb.LoadAVG) *pb.LoadAVG {
 	var l1, l5, l15 float64
 	for _, l := range ll {
 		l1 += l.Load1

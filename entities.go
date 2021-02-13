@@ -1,7 +1,7 @@
-package models
+package sysmon
 
-// StatSnapshot - Слепок всех видов статистики
-type StatSnapshot struct {
+// Stats - Слепок всех видов статистики
+type Stats struct {
 	Lavg *LoadAVG
 	Lcpu *LoadCPU
 }
@@ -18,4 +18,11 @@ type LoadAVG struct {
 	Load1  float64
 	Load5  float64
 	Load15 float64
+}
+
+// Consumer - Подписчик
+type Consumer struct {
+	ID           int
+	Timeout      uint32
+	AveragedOver uint32
 }

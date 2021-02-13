@@ -1,17 +1,17 @@
 package statcollector
 
 import (
-	"github.com/artofey/sysmon/internal/pb"
+	"github.com/artofey/sysmon"
 )
 
 // ParseLoadAVG return load average info.
-func ParseLoadAVG() (*pb.LoadAVG, error) {
+func ParseLoadAVG() (*sysmon.LoadAVG, error) {
 	// todo
 	return nil, nil
 }
 
 // AverageLoadAVG усредняет значения для массива значений LoadAVG.
-func AverageLoadAVG(ll []*pb.LoadAVG) *pb.LoadAVG {
+func AverageLoadAVG(ll []*sysmon.LoadAVG) *sysmon.LoadAVG {
 	// todo
 	return nil
 }

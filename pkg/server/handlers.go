@@ -11,6 +11,7 @@ import (
 
 func (s *Server) GetStats(mr *pb.MonRequest, stream pb.Monitor_GetStatsServer) error {
 	log.Print("new listener")
+	defer log.Print("listener disconnected")
 
 	for {
 		select {
@@ -20,19 +21,22 @@ func (s *Server) GetStats(mr *pb.MonRequest, stream pb.Monitor_GetStatsServer) e
 		// Стар передачи данных после ожидания
 		case <-time.After(time.Duration(mr.AveragedOver) * time.Second):
 			t := time.NewTicker(time.Duration(mr.Timeout) * time.Second)
-			for range t.C {
-				// fmt.Printf("%v - %v\n", s.Stats, mr)
-				midStat, err := s.sc.GetAVGStats(mrToConsumer(mr))
-				if err != nil {
-					return err
-				}
-				if err := stream.Send(midStat); err != nil {
-					return err
+			for {
+				select {
+				case <-stream.Context().Done():
+					return nil
+				case <-t.C:
+					midStat, err := s.sc.GetAVGStats(mrToConsumer(mr))
+					if err != nil {
+						return err
+					}
+					if err := stream.Send(statsToSnapshot(midStat)); err != nil {
+						return err
+					}
 				}
 			}
 		}
 	}
-	return nil
 }
 
 func mrToConsumer(mr *pb.MonRequest) sysmon.Consumer {
@@ -44,7 +48,18 @@ func mrToConsumer(mr *pb.MonRequest) sysmon.Consumer {
 }
 
 func statsToSnapshot(c sysmon.Stats) *pb.StatSnapshot {
+	lavg := pb.LoadAVG{
+		Load1:  c.Lavg.Load1,
+		Load5:  c.Lavg.Load5,
+		Load15: c.Lavg.Load15,
+	}
+	lcpu := pb.LoadCPU{
+		User:   c.Lcpu.User,
+		System: c.Lcpu.System,
+		Idle:   c.Lcpu.Idle,
+	}
 	return &pb.StatSnapshot{
-		// TODO
+		Lavg: &lavg,
+		Lcpu: &lcpu,
 	}
 }

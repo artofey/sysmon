@@ -5,7 +5,7 @@ package statcollector
 import (
 	"context"
 	"fmt"
-	"sync"
+	"log"
 	"time"
 
 	"github.com/artofey/sysmon"
@@ -14,13 +14,19 @@ import (
 // ProcPath is path to proc dir.
 var ProcPath string = "/proc/"
 
-type StatCollector struct {
-	Storage []sysmon.Stats
+type StorageI interface {
+	Add(sysmon.Stats) error
+	GetLast(int) []sysmon.Stats
+	Len() int
 }
 
-func NewStatCollector() *StatCollector {
+type StatCollector struct {
+	Storage StorageI
+}
+
+func NewStatCollector(s StorageI) *StatCollector {
 	return &StatCollector{
-		Storage: make([]sysmon.Stats, 0, 36000),
+		Storage: s,
 	}
 }
 
@@ -35,24 +41,25 @@ func (s *StatCollector) StartCollecting(ctx context.Context) {
 		}
 		stat, err := getStat()
 		if err != nil {
+			log.Print(err.Error())
 			return
 		}
-		s.Storage = append(s.Storage, stat)
+		if err = s.Storage.Add(stat); err != nil {
+			log.Print(err.Error())
+			return
+		}
 	}
 }
 
 func (s *StatCollector) GetAVGStats(consumer sysmon.Consumer) (sysmon.Stats, error) {
 	var nilStats sysmon.Stats
-	var mu sync.Mutex
 	ao := int(consumer.AveragedOver)
-	mu.Lock()
-	defer mu.Unlock()
 
-	if len(s.Storage) < ao {
+	if s.Storage.Len() < ao {
 		return nilStats, fmt.Errorf("no nedded stats")
 	}
 
-	lastSnap := s.Storage[len(s.Storage)-ao:] // get slice by last items
+	lastSnap := s.Storage.GetLast(ao)
 	var lastAVG []*sysmon.LoadAVG
 	var lastCPU []*sysmon.LoadCPU
 

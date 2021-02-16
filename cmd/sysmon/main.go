@@ -9,12 +9,15 @@ import (
 
 	"github.com/artofey/sysmon/pkg/server"
 	"github.com/artofey/sysmon/pkg/statcollector"
+	"github.com/artofey/sysmon/pkg/storage"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	collector := statcollector.NewStatCollector()
+	storage := storage.NewStorage(36000)
+	collector := statcollector.NewStatCollector(storage)
+
 	go collector.StartCollecting(ctx)
 
 	server := server.NewServer(collector)

@@ -15,7 +15,6 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: Extract branch name
-        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -24,7 +23,6 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.33
-          working-directory: ${{env.BRANCH}}
 
   build:
     runs-on: ubuntu-latest

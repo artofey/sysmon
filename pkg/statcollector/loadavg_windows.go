@@ -7,7 +7,7 @@ import (
 // ParseLoadAVG return load average info.
 func ParseLoadAVG() (*sysmon.LoadAVG, error) {
 	// todo
-	return nil, nil
+	return &sysmon.LoadAVG{}, nil
 }
 
 // AverageLoadAVG усредняет значения для массива значений LoadAVG.

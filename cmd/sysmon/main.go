@@ -34,8 +34,7 @@ func main() {
 	signal.Notify(exitCh, syscall.SIGINT, syscall.SIGTERM)
 	<-exitCh
 
-	log.Print("App Down")
-
 	server.Shutdown()
 	cancel()
+	log.Print("App Down")
 }

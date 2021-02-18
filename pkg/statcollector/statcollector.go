@@ -78,11 +78,11 @@ func getStat() (sysmon.Stats, error) {
 	var nilStats sysmon.Stats
 	avg, err := ParseLoadAVG()
 	if err != nil {
-		return nilStats, fmt.Errorf("failed parse load average: %w", err)
+		return nilStats, &ErrParseLoadAVG{Err: err}
 	}
 	cpu, err := ParseLoadCPU()
 	if err != nil {
-		return nilStats, fmt.Errorf("failed parse load process: %w", err)
+		return nilStats, &ErrParseLoadCPU{Err: err}
 	}
 	s := sysmon.Stats{
 		Lavg: avg,

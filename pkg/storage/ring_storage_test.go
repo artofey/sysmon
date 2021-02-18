@@ -107,7 +107,9 @@ func Test_ringStorage_Len(t *testing.T) {
 				s:     tt.fields.s,
 			}
 			for i := 0; i < tt.want; i++ {
-				s.Add(sysmon.Stats{})
+				if err := s.Add(sysmon.Stats{}); err != nil {
+					t.Errorf("ringStorage.Add() error = %v", err)
+				}
 			}
 			if got := s.Len(); got != tt.want {
 				t.Errorf("ringStorage.Len() = %v, want %v", got, tt.want)
@@ -156,7 +158,9 @@ func Test_ringStorage_GetLast(t *testing.T) {
 				s:     tt.fields.s,
 			}
 			for _, st := range tt.want {
-				s.Add(st)
+				if err := s.Add(st); err != nil {
+					t.Errorf("ringStorage.Add() error = %v", err)
+				}
 			}
 			if got := s.GetLast(tt.args.l); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ringStorage.GetLast() = %v, want %v", got, tt.want)

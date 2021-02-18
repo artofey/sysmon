@@ -48,15 +48,25 @@ func mrToConsumer(mr *pb.MonRequest) sysmon.Consumer {
 }
 
 func statsToSnapshot(c sysmon.Stats) *pb.StatSnapshot {
-	lavg := pb.LoadAVG{
-		Load1:  c.Lavg.Load1,
-		Load5:  c.Lavg.Load5,
-		Load15: c.Lavg.Load15,
+	var lavg pb.LoadAVG
+	if c.Lavg == nil {
+		lavg = pb.LoadAVG{}
+	} else {
+		lavg = pb.LoadAVG{
+			Load1:  c.Lavg.Load1,
+			Load5:  c.Lavg.Load5,
+			Load15: c.Lavg.Load15,
+		}
 	}
-	lcpu := pb.LoadCPU{
-		User:   c.Lcpu.User,
-		System: c.Lcpu.System,
-		Idle:   c.Lcpu.Idle,
+	var lcpu pb.LoadCPU
+	if c.Lcpu == nil {
+		lcpu = pb.LoadCPU{}
+	} else {
+		lcpu = pb.LoadCPU{
+			User:   c.Lcpu.User,
+			System: c.Lcpu.System,
+			Idle:   c.Lcpu.Idle,
+		}
 	}
 	return &pb.StatSnapshot{
 		Lavg: &lavg,

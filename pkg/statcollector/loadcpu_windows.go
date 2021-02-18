@@ -3,6 +3,7 @@ package statcollector
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"os/exec"
 	"strconv"
@@ -33,9 +34,12 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 	if len(st) < 10 || strings.HasPrefix(st[2], `"\\`) {
 		return &sysmon.LoadCPU{}, nil
 	}
-	user, _ := strconv.Atoi(strings.Trim(st[2], `"`))
-	system, _ := strconv.Atoi(strings.Trim(st[3], `"`))
-	idle, _ := strconv.Atoi(strings.Trim(st[9], `"`))
+	user, _ := strconv.ParseFloat(strings.Trim(st[2], `"`), 64)
+	system, _ := strconv.ParseFloat(strings.Trim(st[3], `"`), 64)
+	idle, _ := strconv.ParseFloat(strings.Trim(st[9], `"`), 64)
+	if err := cpuScanner.Err(); err != nil {
+		return nil, fmt.Errorf("ошибка при сканировании вывода утилиты typeperf: %w", err)
+	}
 	return &sysmon.LoadCPU{
 		User:   uint64(user),
 		System: uint64(system),
@@ -45,8 +49,17 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 
 // AverageLoadCPU усредняет значения для массива значений LoadCPU.
 func AverageLoadCPU(ll []*sysmon.LoadCPU) *sysmon.LoadCPU {
-	// todo
-	return nil
+	var lu, ls, li uint64
+	for _, l := range ll {
+		lu += l.User
+		ls += l.System
+		li += l.Idle
+	}
+	return &sysmon.LoadCPU{
+		User:   lu / uint64(len(ll)),
+		System: ls / uint64(len(ll)),
+		Idle:   li / uint64(len(ll)),
+	}
 }
 
 func scanLastNonEmptyLine(data []byte, atEOF bool) (advance int, token []byte, err error) {

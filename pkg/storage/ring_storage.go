@@ -25,13 +25,30 @@ func (s *ringStorage) Add(st sysmon.Stats) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.s.Next()
 	s.s.Value = st
+	s.s = s.s.Next()
 	return nil
 }
 
 func (s *ringStorage) Len() int {
-	return s.s.Len()
+	return s.realLen()
+}
+
+func (s *ringStorage) realLen() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var len int
+	var r *ring.Ring
+
+	r = s.s
+	for i := 0; i < r.Len(); i++ {
+		if r.Value != nil {
+			len++
+		}
+		r = r.Next()
+	}
+	return len
 }
 
 func (s *ringStorage) GetLast(l int) []sysmon.Stats {

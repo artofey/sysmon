@@ -15,7 +15,7 @@ import (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	storage := storage.NewStorage(36000)
+	storage := storage.NewRingStorage(36000)
 	collector := statcollector.NewStatCollector(storage)
 
 	go collector.StartCollecting(ctx)

@@ -18,6 +18,9 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 	lc := sysmon.LoadCPU{}
 	var null uint64
 	fmt.Sscanf(string(b), "cpu %d %d %d %d", &lc.User, &null, &lc.System, &lc.Idle)
+	lc.System = lc.System / 1000
+	lc.User = lc.User / 1000
+	lc.Idle = lc.Idle / 1000
 
 	return &lc, nil
 }

@@ -41,7 +41,7 @@ func main() {
 			ss, err := monitorClient.Recv()
 			if err != nil {
 				log.Printf("response error: %v", err)
-				continue
+				return
 			}
 			fmt.Println(pbSSToString(ss))
 		}

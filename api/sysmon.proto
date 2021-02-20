@@ -12,9 +12,9 @@ message LoadAVG {
 
 // Средняя загрузка процессора
 message LoadCPU {
-    uint64 user = 1;
-    uint64 system = 2;
-    uint64 idle = 3;
+    double user = 1;
+    double system = 2;
+    double idle = 3;
 }
 
 // Запрос от клиента к серверу

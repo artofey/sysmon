@@ -8,9 +8,9 @@ type Stats struct {
 
 // LoadCPU - Средняя загрузка процессора
 type LoadCPU struct {
-	User   uint64
-	System uint64
-	Idle   uint64
+	User   float64
+	System float64
+	Idle   float64
 }
 
 // LoadAVG - Средняя загрузка системы за 1, 5 и 15 секунд

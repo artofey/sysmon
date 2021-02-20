@@ -11,6 +11,8 @@ import (
 	"github.com/artofey/sysmon"
 )
 
+const multiplier = 1000000
+
 // ProcPath is path to proc dir.
 var ProcPath string = "/proc/"
 

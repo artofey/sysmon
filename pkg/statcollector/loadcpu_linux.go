@@ -16,26 +16,26 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 	}
 
 	lc := sysmon.LoadCPU{}
-	var null uint64
-	fmt.Sscanf(string(b), "cpu %d %d %d %d", &lc.User, &null, &lc.System, &lc.Idle)
-	lc.System = lc.System / 1000
-	lc.User = lc.User / 1000
-	lc.Idle = lc.Idle / 1000
+	var null float64
+	fmt.Sscanf(string(b), "cpu %g %g %g %g", &lc.User, &null, &lc.System, &lc.Idle)
+	lc.System = lc.System / multiplier
+	lc.User = lc.User / multiplier
+	lc.Idle = lc.Idle / multiplier
 
 	return &lc, nil
 }
 
 // AverageLoadCPU усредняет значения для массива значений LoadCPU.
 func AverageLoadCPU(ll []*sysmon.LoadCPU) *sysmon.LoadCPU {
-	var lu, ls, li uint64
+	var lu, ls, li float64
 	for _, l := range ll {
 		lu += l.User
 		ls += l.System
 		li += l.Idle
 	}
 	return &sysmon.LoadCPU{
-		User:   lu / uint64(len(ll)),
-		System: ls / uint64(len(ll)),
-		Idle:   li / uint64(len(ll)),
+		User:   lu / float64(len(ll)),
+		System: ls / float64(len(ll)),
+		Idle:   li / float64(len(ll)),
 	}
 }

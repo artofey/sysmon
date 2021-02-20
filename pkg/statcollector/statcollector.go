@@ -62,8 +62,8 @@ func (s *StatCollector) GetAVGStats(consumer sysmon.Consumer) (sysmon.Stats, err
 	}
 
 	lastSnap := s.Storage.GetLast(ao)
-	var lastAVG []*sysmon.LoadAVG
-	var lastCPU []*sysmon.LoadCPU
+	lastAVG := make([]*sysmon.LoadAVG, 0)
+	lastCPU := make([]*sysmon.LoadCPU, 0)
 
 	for _, l := range lastSnap {
 		lastAVG = append(lastAVG, l.Lavg)

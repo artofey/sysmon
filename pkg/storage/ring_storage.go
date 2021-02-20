@@ -7,21 +7,21 @@ import (
 	"github.com/artofey/sysmon"
 )
 
-type ringStorage struct {
+type RingStorage struct {
 	count int
 
 	mu sync.Mutex
 	s  *ring.Ring
 }
 
-func NewRingStorage(count int) *ringStorage {
-	return &ringStorage{
+func NewRingStorage(count int) *RingStorage {
+	return &RingStorage{
 		count: count,
 		s:     ring.New(count),
 	}
 }
 
-func (s *ringStorage) Add(st sysmon.Stats) error {
+func (s *RingStorage) Add(st sysmon.Stats) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -30,11 +30,11 @@ func (s *ringStorage) Add(st sysmon.Stats) error {
 	return nil
 }
 
-func (s *ringStorage) Len() int {
+func (s *RingStorage) Len() int {
 	return s.realLen()
 }
 
-func (s *ringStorage) realLen() int {
+func (s *RingStorage) realLen() int {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -51,7 +51,7 @@ func (s *ringStorage) realLen() int {
 	return len
 }
 
-func (s *ringStorage) GetLast(l int) []sysmon.Stats {
+func (s *RingStorage) GetLast(l int) []sysmon.Stats {
 	rLen := s.Len()
 	if rLen < l {
 		return s.get(rLen)
@@ -59,7 +59,7 @@ func (s *ringStorage) GetLast(l int) []sysmon.Stats {
 	return s.get(l)
 }
 
-func (s *ringStorage) get(l int) []sysmon.Stats {
+func (s *RingStorage) get(l int) []sysmon.Stats {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

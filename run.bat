@@ -1,2 +1,3 @@
-go build -o sysmon.exe cmd\sysmon\main.go
-sysmon.exe
+mkdir .build
+go build -o .build\sysmon.exe cmd\server\main.go
+.build\sysmon.exe

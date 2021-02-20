@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/artofey/sysmon/pkg/server/pb"
-
 	"google.golang.org/grpc"
 )
 
@@ -29,18 +28,19 @@ func main() {
 	for {
 		req, err := getRequest(inReader)
 		if err != nil {
-			log.Printf("request error: %v", err)
+			log.Printf("request error: %v\n", err)
 			continue
 		}
 		monitorClient, err := client.GetStats(context.Background(), req)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("GetStats error: %v\n", err)
+			return
 		}
 		log.Printf("MonRequest submitted")
 		for {
 			ss, err := monitorClient.Recv()
 			if err != nil {
-				log.Printf("response error: %v", err)
+				log.Printf("response error: %v\n", err)
 				return
 			}
 			fmt.Println(pbSSToString(ss))

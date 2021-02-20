@@ -5,11 +5,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/artofey/sysmon/pkg/statcollector"
-
-	"google.golang.org/grpc"
-
 	"github.com/artofey/sysmon/pkg/server/pb"
+	"github.com/artofey/sysmon/pkg/statcollector"
+	"google.golang.org/grpc"
 )
 
 type Server struct {

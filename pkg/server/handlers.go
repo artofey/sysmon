@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/artofey/sysmon"
-
 	"github.com/artofey/sysmon/pkg/server/pb"
 )
 

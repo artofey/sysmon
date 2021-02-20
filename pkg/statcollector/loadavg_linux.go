@@ -12,7 +12,7 @@ func ParseLoadAVG() (*sysmon.LoadAVG, error) {
 	procF := ProcPath + "loadavg"
 	b, err := ioutil.ReadFile(procF)
 	if err != nil {
-		return nil, fmt.Errorf("failed of read file %s: %v", procF, err)
+		return nil, fmt.Errorf("failed of read file %s: %w", procF, err)
 	}
 
 	la := sysmon.LoadAVG{}

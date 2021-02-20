@@ -1,26 +1,26 @@
 package sysmon
 
-// Stats - Слепок всех видов статистики
+// Stats - Слепок всех видов статистики.
 type Stats struct {
 	Lavg *LoadAVG
 	Lcpu *LoadCPU
 }
 
-// LoadCPU - Средняя загрузка процессора
+// LoadCPU - Средняя загрузка процессора.
 type LoadCPU struct {
 	User   float64
 	System float64
 	Idle   float64
 }
 
-// LoadAVG - Средняя загрузка системы за 1, 5 и 15 секунд
+// LoadAVG - Средняя загрузка системы за 1, 5 и 15 секунд.
 type LoadAVG struct {
 	Load1  float64
 	Load5  float64
 	Load15 float64
 }
 
-// Consumer - Подписчик
+// Consumer - Подписчик.
 type Consumer struct {
 	ID           int
 	Timeout      uint32

@@ -12,15 +12,15 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 	procF := ProcPath + "stat"
 	b, err := ioutil.ReadFile(procF)
 	if err != nil {
-		return nil, fmt.Errorf("failed of read file %s: %v", procF, err)
+		return nil, fmt.Errorf("failed of read file %s: %w", procF, err)
 	}
 
 	lc := sysmon.LoadCPU{}
 	var null float64
 	fmt.Sscanf(string(b), "cpu %g %g %g %g", &lc.User, &null, &lc.System, &lc.Idle)
-	lc.System = lc.System / multiplier
-	lc.User = lc.User / multiplier
-	lc.Idle = lc.Idle / multiplier
+	lc.System /= multiplier
+	lc.User /= multiplier
+	lc.Idle /= multiplier
 
 	return &lc, nil
 }

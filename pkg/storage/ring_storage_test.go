@@ -15,20 +15,21 @@ func TestNewRingStorage(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *ringStorage
+		want *RingStorage
 	}{
 		{
 			name: "36000",
 			args: args{count: 36000},
-			want: &ringStorage{count: 36000, s: ring.New(36000)},
+			want: &RingStorage{count: 36000, s: ring.New(36000)},
 		},
 		{
 			name: "0",
 			args: args{count: 0},
-			want: &ringStorage{count: 0, s: ring.New(0)},
+			want: &RingStorage{count: 0, s: ring.New(0)},
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewRingStorage(tt.args.count); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewRingStorage() = %v, want %v", got, tt.want)
@@ -37,7 +38,7 @@ func TestNewRingStorage(t *testing.T) {
 	}
 }
 
-func Test_ringStorage_Add(t *testing.T) {
+func TestRingStorage_Add(t *testing.T) {
 	type fields struct {
 		count int
 		s     *ring.Ring
@@ -59,22 +60,23 @@ func Test_ringStorage_Add(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			s := &ringStorage{
+			s := &RingStorage{
 				count: tt.fields.count,
 				s:     tt.fields.s,
 			}
 			if err := s.Add(tt.args.st); (err != nil) != tt.wantErr {
-				t.Errorf("ringStorage.Add() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("RingStorage.Add() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if st := s.GetLast(1); st[0] != tt.args.st {
-				t.Errorf("ringStorage.GetLast(1) = %v, want %v", st, tt.args.st)
+				t.Errorf("RingStorage.GetLast(1) = %v, want %v", st, tt.args.st)
 			}
 		})
 	}
 }
 
-func Test_ringStorage_Len(t *testing.T) {
+func TestRingStorage_Len(t *testing.T) {
 	type fields struct {
 		count int
 		s     *ring.Ring
@@ -101,24 +103,25 @@ func Test_ringStorage_Len(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			s := &ringStorage{
+			s := &RingStorage{
 				count: tt.fields.count,
 				s:     tt.fields.s,
 			}
 			for i := 0; i < tt.want; i++ {
 				if err := s.Add(sysmon.Stats{}); err != nil {
-					t.Errorf("ringStorage.Add() error = %v", err)
+					t.Errorf("RingStorage.Add() error = %v", err)
 				}
 			}
 			if got := s.Len(); got != tt.want {
-				t.Errorf("ringStorage.Len() = %v, want %v", got, tt.want)
+				t.Errorf("RingStorage.Len() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_ringStorage_GetLast(t *testing.T) {
+func TestRingStorage_GetLast(t *testing.T) {
 	type fields struct {
 		count int
 		s     *ring.Ring
@@ -152,24 +155,25 @@ func Test_ringStorage_GetLast(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			s := &ringStorage{
+			s := &RingStorage{
 				count: tt.fields.count,
 				s:     tt.fields.s,
 			}
 			for _, st := range tt.want {
 				if err := s.Add(st); err != nil {
-					t.Errorf("ringStorage.Add() error = %v", err)
+					t.Errorf("RingStorage.Add() error = %v", err)
 				}
 			}
 			if got := s.GetLast(tt.args.l); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ringStorage.GetLast() = %v, want %v", got, tt.want)
+				t.Errorf("RingStorage.GetLast() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_ringStorage_All(t *testing.T) {
+func TestRingStorage_All(t *testing.T) {
 	var err error
 	s := NewRingStorage(5)
 	if got := s.Len(); got != 0 {

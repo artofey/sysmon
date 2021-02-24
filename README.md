@@ -3,6 +3,7 @@
 Демон - программа, собирающая информацию о системе, на которой запущена, и отправляющая её своим клиентам по GRPC.
 
 ![go workflow](https://github.com/artofey/sysmon/actions/workflows/go.yml/badge.svg)
+[![GoDoc](https://godoc.org/github.com/artofey/sysmon?status.svg)](https://pkg.go.dev/github.com/artofey/sysmon)
 
 ## Описание
 Клиент после подключения должен указать два параметра:
@@ -39,6 +40,29 @@
 - [x] Linux.
 - [x] Windows.
 - [ ] Darwin.
+
+## Установка сервера
+Установка через **go get**:
+```
+go get -u github.com/artofey/sysmon/cmd/sysmon-server
+```
+Установка через **Docker**:
+```
+git clone https://github.com/artofey/sysmon.git
+cd sysmon
+make run-img-server
+```
+## Установка клиента
+Установка через **go get**:
+```
+go get -u github.com/artofey/sysmon/cmd/sysmon-client
+```
+Установка через **Docker**:
+```
+git clone https://github.com/artofey/sysmon.git
+cd sysmon
+make run-img-client
+```
 
 <!-- ## Конфигурация
 - Через аргументы командной строки можно указать, на каком порту стартует сервер.

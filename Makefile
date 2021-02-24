@@ -20,19 +20,19 @@ build:
 	go build -o .build/ ./cmd/...
 
 build-img-client:
-	docker -v build -t $(CLIENT_DOCKER_IMG) -f cmd/client/Dockerfile .
+	docker -v build -t $(CLIENT_DOCKER_IMG) -f cmd/sysmon-client/Dockerfile .
 
 build-img-server:
-	docker -v build -t $(SERVER_DOCKER_IMG) -f cmd/server/Dockerfile .
+	docker -v build -t $(SERVER_DOCKER_IMG) -f cmd/sysmon-server/Dockerfile .
 
-run-img-client:
+run-img-client: build-img-client
 	docker run -it --rm $(CLIENT_DOCKER_IMG)
 
-run-img-server:
+run-img-server: build-img-server
 	docker run -it --rm $(SERVER_DOCKER_IMG)
 
-run:
-	go run cmd/server/main.go
+run-server:
+	go run cmd/sysmon-server/main.go
 
 run_client:
-	go run cmd/client/main.go
+	go run cmd/sysmon-client/main.go

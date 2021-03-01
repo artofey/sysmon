@@ -34,5 +34,5 @@ run-img-server: build-img-server
 run-server:
 	go run cmd/sysmon-server/main.go
 
-run_client:
+run-client:
 	go run cmd/sysmon-client/main.go

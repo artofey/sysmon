@@ -9,15 +9,16 @@ import (
 
 type RingStorage struct {
 	count int
+	size  int
 
 	mu sync.Mutex
 	s  *ring.Ring
 }
 
-func NewRingStorage(count int) *RingStorage {
+func NewRingStorage(size int) *RingStorage {
 	return &RingStorage{
-		count: count,
-		s:     ring.New(count),
+		size: size,
+		s:    ring.New(size),
 	}
 }
 
@@ -27,28 +28,14 @@ func (s *RingStorage) Add(st sysmon.Stats) error {
 
 	s.s.Value = st
 	s.s = s.s.Next()
+	if s.count <= s.size {
+		s.count++
+	}
 	return nil
 }
 
 func (s *RingStorage) Len() int {
-	return s.realLen()
-}
-
-func (s *RingStorage) realLen() int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	var len int
-	var r *ring.Ring
-
-	r = s.s
-	for i := 0; i < r.Len(); i++ {
-		if r.Value != nil {
-			len++
-		}
-		r = r.Next()
-	}
-	return len
+	return s.count
 }
 
 func (s *RingStorage) GetLast(l int) []sysmon.Stats {

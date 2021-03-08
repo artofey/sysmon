@@ -20,12 +20,13 @@ func (s *Server) GetStats(mr *pb.MonRequest, stream pb.Monitor_GetStatsServer) e
 		// Стар передачи данных после ожидания
 		case <-time.After(time.Duration(mr.AveragedOver) * time.Second):
 			t := time.NewTicker(time.Duration(mr.Timeout) * time.Second)
+			consumer := mrToConsumer(mr)
 			for {
 				select {
 				case <-stream.Context().Done():
 					return nil
 				case <-t.C:
-					midStat, err := s.sc.GetAVGStats(mrToConsumer(mr))
+					midStat, err := s.sc.GetAVGStats(consumer)
 					if err != nil {
 						return err
 					}

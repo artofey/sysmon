@@ -1,14 +1,17 @@
-package statcollector
+package loadcpu
 
 import (
 	"testing"
 
+	"github.com/artofey/sysmon"
 	"github.com/stretchr/testify/require"
 )
 
 func TestParseLoadCPU(t *testing.T) {
 	ProcPath = "testdata/"
-	cpu, err := ParseLoadCPU()
+	p := NewParser()
+	cpuI, err := p.Parse()
+	cpu := cpuI.(*sysmon.LoadCPU)
 	require.NoError(t, err)
 	require.Equal(t, float64(7037598)/multiplier, cpu.User)
 	require.Equal(t, float64(3377528)/multiplier, cpu.System)

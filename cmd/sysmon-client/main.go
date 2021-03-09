@@ -61,7 +61,7 @@ func pbSSToString(ss *pb.StatSnapshot) string {
 }
 
 func getRequest(reader *bufio.Reader) (*pb.MonRequest, error) {
-	log.Printf("write MonRequest <Timeout> <AveragedOver>:")
+	log.Printf("write non zero <Timeout> <AveragedOver>:")
 	text, err := reader.ReadString('\n')
 	if err != nil {
 		return nil, errors.New("wrong input, try again")

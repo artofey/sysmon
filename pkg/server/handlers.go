@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 func (s *Server) GetStats(mr *pb.MonRequest, stream pb.Monitor_GetStatsServer) error {
 	log.Print("new listener")
 	defer log.Print("listener disconnected")
+
+	if mr.Timeout < 1 || mr.AveragedOver < 1 {
+		return fmt.Errorf("\"Timeout\" or \"AveragedOver\" cannot be zero")
+	}
 
 	for {
 		select {
@@ -26,7 +31,7 @@ func (s *Server) GetStats(mr *pb.MonRequest, stream pb.Monitor_GetStatsServer) e
 				case <-stream.Context().Done():
 					return nil
 				case <-t.C:
-					midStat, err := s.sc.GetAVGStats(consumer)
+					midStat, err := s.sc.AVGStats(consumer)
 					if err != nil {
 						return err
 					}

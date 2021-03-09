@@ -100,13 +100,13 @@ func (s *StatCollector) parseAllStats() (sysmon.Stats, error) {
 		if err != nil {
 			return sysmon.Stats{}, err
 		}
-		switch stat.(type) {
+		switch statT := stat.(type) {
 		case *sysmon.LoadAVG:
 			newStats.Lavg = stat.(*sysmon.LoadAVG)
 		case *sysmon.LoadCPU:
 			newStats.Lcpu = stat.(*sysmon.LoadCPU)
 		default:
-			return sysmon.Stats{}, fmt.Errorf("incorrect parser type")
+			return sysmon.Stats{}, fmt.Errorf("incorrect parser type %T", statT)
 		}
 	}
 	return newStats, nil

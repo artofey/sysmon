@@ -31,8 +31,9 @@ func TestNewRingStorage(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewRingStorage(tt.args.size); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewRingStorage() = %v, want %v", got, tt.want)
+			if got := NewRingStorage(tt.args.size); got.size != tt.want.size || got.count != tt.want.count {
+				t.Errorf("NewRingStorage().size = %v, want %v", got.size, tt.want.size)
+				t.Errorf("NewRingStorage().count = %v, want %v", got.count, tt.want.count)
 			}
 		})
 	}

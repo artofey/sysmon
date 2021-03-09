@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/artofey/sysmon/pkg/loadavg"
+	"github.com/artofey/sysmon/pkg/loadcpu"
 	"github.com/artofey/sysmon/pkg/server"
 	"github.com/artofey/sysmon/pkg/statcollector"
 	"github.com/artofey/sysmon/pkg/storage"
@@ -16,7 +18,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	storage := storage.NewRingStorage(36000)
-	collector := statcollector.NewStatCollector(storage)
+	collector := statcollector.NewStatCollector(storage, makeParsers())
 
 	go collector.StartCollecting(ctx)
 
@@ -37,4 +39,11 @@ func main() {
 	server.Shutdown()
 	cancel()
 	log.Print("App Down")
+}
+
+func makeParsers() []statcollector.Parser {
+	return []statcollector.Parser{
+		loadavg.NewParser(),
+		loadcpu.NewParser(),
+	}
 }

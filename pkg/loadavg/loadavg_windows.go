@@ -1,11 +1,17 @@
-package statcollector
+package loadavg
 
 import (
 	"github.com/artofey/sysmon"
 )
 
-// ParseLoadAVG return load average info.
-func ParseLoadAVG() (*sysmon.LoadAVG, error) {
+type Parser struct{}
+
+func NewParser() *Parser {
+	return &Parser{}
+}
+
+// Parse return load average info.
+func (p *Parser) Parse() (interface{}, error) {
 	// todo
 	return &sysmon.LoadAVG{}, nil
 }

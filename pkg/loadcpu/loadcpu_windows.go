@@ -1,4 +1,4 @@
-package statcollector
+package loadcpu
 
 import (
 	"bufio"
@@ -26,8 +26,14 @@ func init() {
 	}
 }
 
-// ParseLoadCPU return CPU stat.
-func ParseLoadCPU() (*sysmon.LoadCPU, error) {
+type Parser struct{}
+
+func NewParser() *Parser {
+	return &Parser{}
+}
+
+// Parse return CPU stat.
+func (p *Parser) Parse() (interface{}, error) {
 	cpuScanner.Scan()
 	record := cpuScanner.Text()
 	st := strings.Split(record, ",")
@@ -47,35 +53,41 @@ func ParseLoadCPU() (*sysmon.LoadCPU, error) {
 	}, nil
 }
 
-// AverageLoadCPU усредняет значения для массива значений LoadCPU.
-func AverageLoadCPU(ll []*sysmon.LoadCPU) *sysmon.LoadCPU {
+// Average усредняет значения для массива значений LoadCPU.
+func (Parser) Average(itemsI interface{}) (interface{}, error) {
 	var lu, ls, li uint64
-	for _, l := range ll {
+	items, ok := itemsI.([]*sysmon.LoadCPU)
+	if !ok {
+		return nil, fmt.Errorf("itemsI type not is []*sysmon..LoadCPU")
+	}
+	for _, l := range items {
 		lu += l.User
 		ls += l.System
 		li += l.Idle
 	}
+	count := uint64(len(items))
 	return &sysmon.LoadCPU{
-		User:   lu / uint64(len(ll)),
-		System: ls / uint64(len(ll)),
-		Idle:   li / uint64(len(ll)),
+		User:   lu / count,
+		System: ls / count,
+		Idle:   li / count,
 	}
 }
 
+func (Parser) Valid(item interface{}) bool {
+	_, ok := item.(*sysmon.LoadCPU)
+	return ok
+}
+
 func scanLastNonEmptyLine(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	// Set advance to after our last line
 	if atEOF {
 		advance = len(data)
 	} else {
-		// data[advance:] now contains a possibly incomplete line
 		advance = bytes.LastIndexAny(data, "\n\r") + 1
 	}
 	data = data[:advance]
 
-	// Remove empty lines (strip EOL chars)
 	data = bytes.TrimRight(data, "\n\r")
 
-	// We have no non-empty lines, so advance but do not return a token.
 	if len(data) == 0 {
 		return advance, nil, nil
 	}

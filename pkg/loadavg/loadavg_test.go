@@ -28,7 +28,7 @@ func TestParser_Errors(t *testing.T) {
 
 func TestParser_Average(t *testing.T) {
 	type args struct {
-		items []interface{}
+		items interface{}
 	}
 	tests := []struct {
 		name    string
@@ -39,18 +39,18 @@ func TestParser_Average(t *testing.T) {
 		{
 			name: "good",
 			args: args{
-				items: []interface{}{
-					&sysmon.LoadAVG{
+				items: []*sysmon.LoadAVG{
+					{
 						Load1:  1,
 						Load5:  1,
 						Load15: 1,
 					},
-					&sysmon.LoadAVG{
+					{
 						Load1:  2,
 						Load5:  2,
 						Load15: 2,
 					},
-					&sysmon.LoadAVG{
+					{
 						Load1:  3,
 						Load5:  3,
 						Load15: 3,
@@ -66,7 +66,7 @@ func TestParser_Average(t *testing.T) {
 		{
 			name: "type error",
 			args: args{
-				items: []interface{}{
+				items: []string{
 					"&sysmon.LoadAVG{1, 1, 1}",
 					"&sysmon.LoadAVG{2, 2, 2}",
 					"&sysmon.LoadAVG{3, 3, 3}",

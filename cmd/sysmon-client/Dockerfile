@@ -13,9 +13,8 @@ RUN CGO_ENABLED=0 go build \
         -ldflags "$LDFLAGS" \
         -o /build/sysmon-client ./cmd/sysmon-client
 
-FROM scratch
+FROM alpine
 
-ENV BIN_FILE "/opt/sysmon/sysmon-client"
 COPY --from=build /build/sysmon-client /sysmon-client
 
-ENTRYPOINT ["/sysmon-client"]
+CMD ["tail", "-f", "/dev/null"]

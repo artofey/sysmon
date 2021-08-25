@@ -15,7 +15,11 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	host := os.Getenv("SYSMON_SERVER_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+	conn, err := grpc.Dial(host+":50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 	}

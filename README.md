@@ -41,6 +41,15 @@
 - [x] Windows.
 - [ ] Darwin.
 
+## Запуск через docker-compose
+
+```
+docker-compose up --build
+docker exec -it sysmon-client sh
+./sysmon-client
+
+```
+
 ## Установка сервера
 Установка через **go get**:
 ```

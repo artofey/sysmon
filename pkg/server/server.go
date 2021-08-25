@@ -24,7 +24,7 @@ func NewServer(sc *statcollector.StatCollector) *Server {
 
 func (s *Server) Run(port int) error {
 	log.Print("Start GRPC server")
-	lis, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}

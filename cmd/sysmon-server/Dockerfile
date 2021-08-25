@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 go build \
         -ldflags "$LDFLAGS" \
         -o /build/sysmon-server ./cmd/sysmon-server
 
-FROM scratch
+FROM alpine
 
 COPY --from=build "/build/sysmon-server" "/sysmon-server"
 

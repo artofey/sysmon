@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+    sysmon-client:
+        build:
+          context: ./
+          dockerfile: ./cmd/sysmon-client/Dockerfile
+        container_name: sysmon-client
+        depends_on:
+            - sysmon-server
+        environment: 
+          - SYSMON_SERVER_HOST=sysmon-server
+        
+    sysmon-server:
+        build:
+          context: ./
+          dockerfile: ./cmd/sysmon-server/Dockerfile
+        ports: 
+          - "50051:50051"
+        container_name: sysmon-server

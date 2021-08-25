@@ -1,24 +1,20 @@
 FROM golang:1.15.2 as build
 
-ENV BIN_FILE /opt/sysmon/sysmon-server
-ENV CODE_DIR /go/src/
-
-WORKDIR ${CODE_DIR}
+WORKDIR /src/
 
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-COPY . ${CODE_DIR}
+COPY . .
 
 ARG LDFLAGS='-extldflags "-static"'
 RUN CGO_ENABLED=0 go build \
         -ldflags "$LDFLAGS" \
-        -o ${BIN_FILE} cmd/sysmon-server/main.go
+        -o /build/sysmon-server ./cmd/sysmon-server
 
 FROM scratch
 
-ENV BIN_FILE "/opt/sysmon/sysmon-server"
-COPY --from=build ${BIN_FILE} ${BIN_FILE}
+COPY --from=build "/build/sysmon-server" "/sysmon-server"
 
-ENTRYPOINT ["/opt/sysmon/sysmon-server"]
+ENTRYPOINT ["/sysmon-server"]
